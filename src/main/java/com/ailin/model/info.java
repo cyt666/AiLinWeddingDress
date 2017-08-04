@@ -5,5 +5,4 @@ package com.ailin.model;
  * 用来存放模型数据
  */
 public class info {
-
 }
