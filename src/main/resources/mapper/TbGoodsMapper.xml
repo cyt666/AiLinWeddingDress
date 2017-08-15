@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.ailin.dao.TbGoodsDao" >
+        <resultMap id="BaseResultMap" type="com.ailin.model.TbGoods" >
+                <id column="id" property="id" jdbcType="INTEGER" />
+                <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+                <result column="putaway_time" property="putawayTime" jdbcType="DATE" />
+                <result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
+                <result column="visibility" property="visibility" jdbcType="TINYINT" />
+                <result column="is_putaway" property="isPutaway" jdbcType="TINYINT" />
+                <result column="name" property="name" jdbcType="VARCHAR" />
+                <result column="hemline" property="hemline" jdbcType="VARCHAR" />
+                <result column="description" property="description" jdbcType="VARCHAR" />
+                <result column="style" property="style" jdbcType="VARCHAR" />
+                <result column="color" property="color" jdbcType="VARCHAR" />
+                <result column="quantity" property="quantity" jdbcType="INTEGER" />
+                <result column="sale_count" property="saleCount" jdbcType="INTEGER" />
+                <result column="weight" property="weight" jdbcType="INTEGER" />
+                <result column="status" property="status" jdbcType="VARCHAR" />
+                <result column="price" property="price" jdbcType="INTEGER" />
+
+        </resultMap>
+
+<select id="selectGoodsById" resultMap="BaseResultMap" parameterType="INTEGER">
+        SELECT * FROM tb_goods WHERE id=#{goodsId}
+</select>
+        <select id="selectGoodsByWeight" resultMap="BaseResultMap">
+                SELECT * FROM tb_goods ORDER BY weight LIMIT 9
+        </select>
+
+        <select id="selectGoodsByPrice" resultMap="BaseResultMap" parameterType="INTEGER">
+                SELECT * FROM tb_goods WHERE 1=1
+                   <choose>
+                           <when test="num=1">and price BETWEEN 0 AND 1000 LIMIT 9</when>
+                           <when test="num=2">and price BETWEEN 1000 AND 3000 LIMIT 9</when>
+                           <when test="num=3">and price BETWEEN 3000 AND 200000 LIMIT 9</when>
+                   </choose>
+        </select>
+</mapper>

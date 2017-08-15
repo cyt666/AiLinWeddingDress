@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.ailin.dao.TbShopGoodsRelationDao" >
+  <resultMap id="BaseResultMap" type="com.ailin.model.TbShopGoodsRelation" >
+    <id column="realationId" property="id" jdbcType="INTEGER" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="sale_count" property="saleCount" jdbcType="INTEGER" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+
+    <association property="goods" javaType="com.ailin.model.TbGoods"  >
+      <id column="goodsId" property="id" />
+      <result column="goodsName" property="name"/>
+      <result column="hemline" property="hemline"/>
+      <result column="description" property="description"/>
+      <result column="style" property="style"/>
+      <result column="color" property="color"/>
+      <result column="quantity" property="quantity"/>
+      <result column="goodsSale_count" property="saleCount"/>
+      <result column="weight" property="weight"/>
+      <result column="status" property="status"/>
+      <result column="price" property="price"/>
+    </association>
+
+    <association property="shop"  javaType="com.ailin.model.TbShop">
+      <id column="shopId" property="id"  />
+      <result column="image" property="image"/>
+      <result column="shopName" property="name"/>
+      <result column="shopSale_count" property="saleCount"/>
+      <result column="telephone" property="telephone"/>
+      <result column="adress" property="adress"/>
+      <result column="manager_id" property="managerId"/>
+    </association>
+
+    <collection property="goodsImageList" ofType="com.ailin.model.TbGoodsImage">
+      <id column="imgId" property="id"/>
+      <result column="ImgGoodsId" property="goodsId"  />
+      <result column="url" property="url"/>
+      <result column="position" property="position" />
+    </collection>
+
+  </resultMap>
+
+  <select id="selectAllGoods" resultMap="BaseResultMap">
+    SELECT tb_shop_goods_relation.id AS realationId,tb_shop_goods_relation.shop_id,tb_shop_goods_relation.goods_id,tb_shop_goods_relation.sale_count,tb_shop_goods_relation.quantity,
+    tb_goods.id AS goodsId,tb_goods.name AS goodsName,tb_goods.hemline,tb_goods.description,
+    tb_goods.style,tb_goods.color,tb_goods.quantity,tb_goods.sale_count AS goodsSale_count,tb_goods.weight,tb_goods.status,tb_goods.price,
+    tb_shop.id AS shopId,tb_shop.image,tb_shop.name AS shopName,tb_shop.sale_count AS shopSale_count,tb_shop.telephone,tb_shop.adress,tb_shop.manager_id,
+    tb_goods_image.id AS imgId,tb_goods_image.goods_id AS ImgGoodsId,tb_goods_image.url,tb_goods_image.position
+    FROM tb_goods,tb_shop,tb_goods_image,tb_shop_goods_relation
+    WHERE tb_goods.id=tb_shop_goods_relation.goods_id
+    AND tb_shop.id=tb_shop_goods_relation.shop_id
+    AND tb_goods_image.goods_id=tb_shop_goods_relation.goods_id
+    AND tb_goods_image.position=1 AND 1=1
+    <if test="shopId!=null"> AND  tb_shop_goods_relation.shop_id=#{0}</if>
+    <if test="goodsName!=null"> AND tb_shop.name LIKE #{1}</if>
+    <if test="conditionId==1"> ORDER BY tb_goods.price</if>
+  </select>
+
+  <select id="selectGoodsById" resultMap="BaseResultMap" parameterType="INTEGER">
+    SELECT tb_goods_image.position,tb_shop_goods_relation.id AS realationId,tb_shop_goods_relation.shop_id,tb_shop_goods_relation.goods_id,tb_shop_goods_relation.sale_count,tb_shop_goods_relation.quantity,
+    tb_goods.id AS goodsId,tb_goods.name AS goodsName,tb_goods.hemline,tb_goods.description,
+    tb_goods.style,tb_goods.color,tb_goods.quantity,tb_goods.sale_count AS goodsSale_count,tb_goods.weight,tb_goods.status,tb_goods.price,
+    tb_shop.id AS shopId,tb_shop.image,tb_shop.name AS shopName,tb_shop.sale_count AS shopSale_count,tb_shop.telephone,tb_shop.adress,tb_shop.manager_id,
+    tb_goods_image.id AS imgId,tb_goods_image.goods_id AS ImgGoodsId,tb_goods_image.url,tb_goods_image.position
+    FROM tb_goods,tb_shop,tb_goods_image,tb_shop_goods_relation
+    WHERE tb_goods.id=tb_shop_goods_relation.goods_id
+    AND tb_shop.id=tb_shop_goods_relation.shop_id
+    AND tb_goods_image.goods_id=tb_shop_goods_relation.goods_id
+    AND tb_shop_goods_relation.id=#{shopGoodsRelationId}
+  </select>
+
+
+</mapper>
