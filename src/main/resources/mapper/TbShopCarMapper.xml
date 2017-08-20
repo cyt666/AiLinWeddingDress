@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.ailin.dao.TbShopCarDao" >
+    <resultMap type="com.ailin.model.TbShopCar" id="BaseResultMap">
+        <id column="consumer_id" property="consumerId" jdbcType="INTEGER" />
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <!-- 跳的第一张表 -->
+
+        <collection property="goodsList" ofType="com.ailin.model.TbShopCarGoodsRelation" column="ShopCarId">
+            <id column="goods_id" property="goodsId" jdbcType="INTEGER" />
+            <result column="shop_car_id" property="shopCarId" jdbcType="INTEGER" />
+            <result column="id" property="id" jdbcType="INTEGER" />
+            <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+            <result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
+            <result column="visibility" property="visibility" jdbcType="TINYINT" />
+            <result column="size" property="size" jdbcType="VARCHAR" />
+            <result column="count" property="count"  jdbcType="INTEGER" />
+            <result column="status" property="status" jdbcType="TINYINT" />
+
+            <!-- 跳的第二张表 -->
+
+            <association property="shopGoodsList" javaType="com.ailin.model.TbShopGoodsRelation">
+                <id column="id" property="id" jdbcType="INTEGER" />
+                <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+                <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+                <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+                <result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
+                <result column="visibility" property="visibility" jdbcType="TINYINT" />
+                <result column="sale_count" property="saleCount" jdbcType="INTEGER" />
+                <result column="quantity" property="quantity" jdbcType="INTEGER" />
+
+                <!-- 跳的第三张表 -->
+
+                <association property="shop" javaType="com.ailin.model.TbShop">
+                    <id column="shopId" property="id" jdbcType="INTEGER" />
+                    <result column="shopImage" property="image" jdbcType="VARCHAR" />
+                    <result column="shopName" property="name" jdbcType="VARCHAR" />
+                </association>
+                <association property="goods" javaType="com.ailin.model.TbGoods">
+                    <id column="id" property="id" jdbcType="INTEGER" />
+                    <result column="goodsName" property="name" jdbcType="VARCHAR" />
+                    <result column="hemline" property="hemline" jdbcType="VARCHAR" />
+                    <result column="description" property="description" jdbcType="VARCHAR" />
+                    <result column="style" property="style" jdbcType="VARCHAR" />
+                    <result column="color" property="color" jdbcType="VARCHAR" />
+                    <result column="price" property="price" jdbcType="INTEGER" />
+                </association>
+                <association property="goodsImage" javaType="com.ailin.model.TbGoodsImage">
+                    <id column="id" property="id" jdbcType="INTEGER" />
+                    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+                    <result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
+                    <result column="visibility" property="visibility" jdbcType="TINYINT" />
+                    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+                    <result column="goodsImage" property="url" jdbcType="VARCHAR" />
+                    <result column="position" property="position" jdbcType="INTEGER" />
+                </association>
+            </association>
+
+        </collection>
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, create_time, last_update, visibility, consumer_id
+    </sql>
+
+    <!--查找一个购物车  -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from tb_shop_car
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <!-- 删除一个购物车 -->
+    <delete id="deleteByPrimaryKey"   parameterType="com.ailin.model.TbShopCar" >
+        update tb_shop_car
+        set
+        visibility =0,
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <!-- 增加一个购物车 -->
+    <insert id="insert" parameterType="com.ailin.model.TbShopCar" useGeneratedKeys="true" keyProperty="id" >
+        insert into tb_shop_car (create_time, last_update, visibility,
+        consumer_id)
+        values (#{createTime,jdbcType=TIMESTAMP}, #{lastUpdate,jdbcType=TIMESTAMP}, #{visibility,jdbcType=TINYINT},
+        #{consumerId,jdbcType=INTEGER})
+    </insert>
+
+    <!-- 修改一个购物车 -->
+    <update id="updateByPrimaryKey" parameterType="com.ailin.model.TbShopCar" >
+        update tb_shop_car
+        set create_time = #{createTime,jdbcType=TIMESTAMP},
+        last_update = #{lastUpdate,jdbcType=TIMESTAMP},
+        visibility = #{visibility,jdbcType=TINYINT},
+        consumer_id = #{consumerId,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="selectByConsumerId"  parameterType="java.lang.Integer" resultType="Integer">
+        select id from tb_shop_car where consumer_id=#{consumerId}
+    </select>
+
+    <select id="selectByShopCarId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select scgr.shop_car_id,scgr.goods_id,scgr.size,scgr.count,scgr.status,sc.id from tb_shop_car_goods_relation scgr,tb_shop_car sc where scgr.shop_car_id=sc.id and sc.id=#{id}
+    </select>
+
+
+
+    <!--
+   <select id="selectAllShopCarGoods" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
+   SELECT
+   sc.id as sc_id,
+   s.id as s_id,
+   s.image as s_image,
+   sgr.id as sgr_id,
+   s.name as s_name,
+   g.id as g_id,
+   g.name as g_name,
+   g.color as g_color,
+   g.description as g_description,
+   g.hemline as g_hemline,
+   g.price as g_price,
+   g.style as g_style,
+   scgr.goods_id as scgr_goods_id,
+   scgr.size as scgr_size,
+   scgr.count  as scgr_count
+   FROM
+   tb_shop s ,tb_goods g,tb_shop_goods_relation sgr,tb_shop_car_goods_relation scgr,tb_shop_car sc
+   WHERE
+   s.id=sgr.shop_id  AND  g.id=sgr.goods_id AND  sgr.id=scgr.goods_id AND scgr.shop_car_id=sc.id  AND sc.id=#{id}
+   </select>
+     -->
+
+    <select id="selectAllShopCarGoods" parameterType="java.lang.Integer" resultType="com.ailin.model.ShopCarGoods" >
+        select
+        s.id as shopId,
+        s.image as shopImage,
+        s.name as shopName,
+        g.name as goodsName,
+        g.color,
+        g.description,
+        g.hemline,
+        g.price,
+        g.style,
+        gI.url as goodsImage,
+        scgr.shop_car_id as shopCarId,
+        scgr.size,
+        scgr.count FROM
+        tb_shop s,tb_goods g,tb_shop_goods_relation sgr,tb_shop_car_goods_relation scgr,tb_shop_car sc,tb_goods_image gI
+        WHERE
+        s.id=sgr.shop_id  AND g.id=sgr.goods_id AND  sgr.id=scgr.goods_id  and g.id=gI.id AND scgr.shop_car_id=sc.id  AND sc.id=#{id}
+    </select>
+
+</mapper>

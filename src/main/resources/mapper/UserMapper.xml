@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.ailin.dao.UserDao" >
+  <resultMap id="BaseResultMap" type="com.ailin.model.User" >
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="pass" property="pass" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    userid, username, pass
+  </sql>
+  <insert id="insertSelective" parameterType="com.ailin.model.User" >
+    insert into `user`
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      username,
+      pass,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{username,jdbcType=VARCHAR},
+      #{pass,jdbcType=VARCHAR},
+    </trim>
+  </insert>
+  <delete id="deleteById" parameterType="java.lang.Integer">
+  delete from user where userid=#{userid}
+  </delete>
+  <update id="updateById" parameterType="com.ailin.model.User">
+  update user set pass=#{pass} where userid=#{userid}
+  </update>
+  <select id="selectAll" resultMap="BaseResultMap">
+  select * from user
+  </select>
+  <select id="login" resultMap="BaseResultMap" parameterType="com.ailin.model.User">
+  select * from user where username=#{username} and pass=#{pass}
+  </select>
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from users
+    where userid = #{userid,jdbcType=INTEGER}
+  </select>
+</mapper>

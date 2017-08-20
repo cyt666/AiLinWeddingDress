@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.ailin.dao.TbOrderDao" >
+  <resultMap id="BaseResultMap" type="com.ailin.model.TbOrder" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
+    <result column="visibility" property="visibility" jdbcType="TINYINT" />
+    <result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
+    <result column="consumer_id" property="consumerId" jdbcType="INTEGER" />
+    <result column="address_id" property="addressId" jdbcType="INTEGER" />
+    <result column="pay_way" property="payWay" jdbcType="TINYINT" />
+    <result column="transfer_way" property="transferWay" jdbcType="TINYINT" />
+    <result column="transfer_time" property="transferTime" jdbcType="VARCHAR" />
+    <result column="coupon_id" property="couponId" jdbcType="INTEGER" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="transfer_begin" property="transferBegin" jdbcType="TIMESTAMP" />
+    <result column="transfer_end" property="transferEnd" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_time, last_update, visibility, order_number, consumer_id, address_id, 
+    pay_way, transfer_way, transfer_time, coupon_id, price, transfer_begin, transfer_end, 
+    `status`, remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByOrderNumber" parameterType="java.lang.String">
+    select id from tb_order where order_number=#{orderNumber}
+  </select>
+  <!--删除-->
+  <delete id="deleteByPrimaryKey" parameterType="com.ailin.model.TbOrder" >
+    delete from tb_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <!--增加订单-->
+  <insert id="insert" parameterType="com.ailin.model.TbOrder" useGeneratedKeys="true" keyProperty="id" >
+    insert into tb_order (
+    order_number, consumer_id, address_id,
+    pay_way, transfer_way,transfer_time
+    coupon_id, price,
+    remark
+    )
+    values (
+    #{orderNumber,jdbcType=VARCHAR}, #{consumerId,jdbcType=INTEGER}, #{addressId,jdbcType=INTEGER},
+    #{payWay,jdbcType=TINYINT}, #{transferWay,jdbcType=TINYINT}, #{transferTime,jdbcType=VARCHAR},
+    #{couponId,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL},
+    #{remark,jdbcType=VARCHAR}
+    )
+  </insert>
+  <!--修改-->
+  <update id="updateByPrimaryKey" parameterType="com.ailin.model.TbOrder" >
+    update tb_order
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      last_update = #{lastUpdate,jdbcType=TIMESTAMP},
+      visibility = #{visibility,jdbcType=TINYINT},
+      order_number = #{orderNumber,jdbcType=VARCHAR},
+      consumer_id = #{consumerId,jdbcType=INTEGER},
+      address_id = #{addressId,jdbcType=INTEGER},
+      pay_way = #{payWay,jdbcType=TINYINT},
+      transfer_way = #{transferWay,jdbcType=TINYINT},
+      transfer_time = #{transferTime,jdbcType=VARCHAR},
+      coupon_id = #{couponId,jdbcType=INTEGER},
+      price = #{price,jdbcType=DECIMAL},
+      transfer_begin = #{transferBegin,jdbcType=TIMESTAMP},
+      transfer_end = #{transferEnd,jdbcType=TIMESTAMP},
+      `status` = #{status,jdbcType=TINYINT},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

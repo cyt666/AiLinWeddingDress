@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.ailin.dao.TbShopCarGoodsRelationDao" >
+    <resultMap id="BaseResultMap" type="com.ailin.model.TbShopCarGoodsRelation" >
+        <id column="shop_car_id" property="shopCarId" jdbcType="INTEGER" />
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
+        <result column="visibility" property="visibility" jdbcType="TINYINT" />
+
+        <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+        <result column="size" property="size" jdbcType="VARCHAR" />
+        <result column="count" property="count"  jdbcType="INTEGER" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+
+
+        <!--
+         <association property="shopGoodsList" javaType="com.ailin.model.TbShopGoodsRelation" >
+         <id column="id" property="id" jdbcType="INTEGER" />
+          <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+         <result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
+         <result column="visibility" property="visibility" jdbcType="TINYINT" />
+         <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+         <result column="sale_count" property="saleCount" jdbcType="INTEGER" />
+         <result column="quantity" property="quantity" jdbcType="INTEGER" />
+         </association>
+          -->
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, create_time, last_update, visibility, shop_car_id, goods_id, `size`, `count`,
+        `status`
+    </sql>
+    <!-- 查找一条需要的商品到购物车 -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from tb_shop_car_goods_relation
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <!-- 删除一条不需要的商品或者已经购买的商品从购物车 -->
+    <delete id="deleteByPrimaryKey" parameterType="com.ailin.model.TbShopCarGoodsRelation" >
+        update tb_shop_car_goods_relation set `status` =1 where shop_car_id=#{shopCarId} and goods_id=#{goodsId}
+    </delete>
+    <!-- 增加一条需要的商品到购物车 -->
+    <insert id="insert" parameterType="com.ailin.model.TbShopCarGoodsRelation">
+        insert into tb_shop_car_goods_relation (
+        shop_car_id, goods_id, `size`,
+        `count`)
+        values (
+        #{shopCarId,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER}, #{size,jdbcType=VARCHAR},
+        #{count,jdbcType=INTEGER})
+    </insert>
+
+    <!-- 修改一条需要的商品到购物车 -->
+    <update id="updateByPrimaryKey" parameterType="com.ailin.model.TbShopCarGoodsRelation" >
+        update tb_shop_car_goods_relation  set
+        `size` = #{size,jdbcType=VARCHAR},
+        `count` = #{count,jdbcType=INTEGER}
+        where shop_car_id=#{shopCarId} and goods_id=#{goodsId}
+    </update>
+
+    <select id="selectByshopCarIdAndGoodsId" parameterType="java.util.Map">
+        select id from tb_shop_car_goods_relation where shop_car_id=#{shopCarId} and goods_id=#{goodsId}
+    </select>
+
+
+    <!--
+    <select id="selectTbShopCarGoodsRelationAndTbShopGoodsRelation" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select sg.id,sg.shop_id,sg.goods_id , scgr.goods_id from tb_shop_goods_relation sg,tb_shop_car_goods_relation scgr where scgr.goods_id=sg.id and scgr.goods_id=#{goodsId}
+    </select>
+     -->
+</mapper>
