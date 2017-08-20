@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.ailin.dao.TbOrderDao" >
+    <resultMap id="BaseResultMap" type="com.ailin.model.TbOrder" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
+        <result column="visibility" property="visibility" jdbcType="TINYINT" />
+        <result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
+        <result column="consumer_id" property="consumerId" jdbcType="INTEGER" />
+        <result column="address_id" property="addressId" jdbcType="INTEGER" />
+        <result column="pay_way" property="payWay" jdbcType="TINYINT" />
+        <result column="transfer_conpany" property="transferConpany" jdbcType="VARCHAR" />
+        <result column="transfer_time" property="transferTime" jdbcType="VARCHAR" />
+        <result column="coupon_id" property="couponId" jdbcType="INTEGER" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="transfer_begin" property="transferBegin" jdbcType="TIMESTAMP" />
+        <result column="transfer_end" property="transferEnd" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+
+
+        <!--根据consumer_id 查orderid跳到第二张表tbordergoodsrelation里查相关信息  -->
+        <association property="tbOrderGoodsRelationlist" javaType="com.ailin.model.TbOrderGoodsRelation">
+            <id column="orderGoodsRelationId" property="id" jdbcType="INTEGER"/>
+            <result column="orderGoodsRelationgoodsId" property="goodsId" jdbcType="INTEGER" />
+            <result column="size" property="size" jdbcType="VARCHAR" />
+            <result column="count" property="count" jdbcType="INTEGER" />
+        </association>
+
+        <!-- 跳到第三张表tbShopGoodsRelation进行查询我要的信息 -->
+        <association property="tbShopGoodsRelationlist" javaType="com.ailin.model.TbShopGoodsRelation">
+            <id column="shopGoodsRelationId" property="id" jdbcType="INTEGER"/>
+            <result column="shopGoodsRelationshopId" property="shopId" jdbcType="INTEGER"/>
+            <result column="shopGoodsRelationgoodsId" property="goodsId" jdbcType="INTEGER"/>
+        </association>
+
+        <!-- 跳到第四张表tbShop进行查询我要的信息 -->
+        <collection property="tbShoplist" javaType="com.ailin.model.TbShop">
+            <id column="shopId" property="id" jdbcType="INTEGER"/>
+            <result column="shopName" property="name" jdbcType="VARCHAR"/>
+            <result column="telephone" property="telephone" jdbcType="VARCHAR"/>
+        </collection>
+
+        <!-- 跳到第五张表tbGoods进行查询我要的信息 -->
+        <collection property="tbGoodslist" javaType="com.ailin.model.TbGoods">
+            <id column="goodsId" property="id" jdbcType="INTEGER"/>
+            <result column="goodsName" property="name" jdbcType="VARCHAR"/>
+            <result column="goodsPrice" property="price" jdbcType="VARCHAR"/>
+        </collection>
+
+        <collection property="tbGoodsImagelist" javaType="com.ailin.model.TbGoodsImage" >
+            <id column="goodsImageId" property="id" jdbcType="INTEGER"/>
+            <result column="url" property="url" jdbcType="VARCHAR"/>
+        </collection>
+
+    </resultMap>
+
+
+
+    <select id="selectOrderAll" parameterType="java.lang.Integer" resultType="com.ailin.model.Pojo">
+        SELECT
+        o.id as orderId,
+        o.consumer_id as consumerId,
+        o.price as price,
+        o.status,
+        o.address_id as addressId,
+        o.order_number,
+        o.pay_way as payWay ,
+        o.transfer_conpany as transferConpany,
+        o.transfer_time as transferTime,
+        o.transfer_begin as transferBegin,
+        o.transfer_end as transferEnd,
+        o.remark,
+        ogr.id AS orderGoodsRelationId,
+        ogr.size,
+        ogr.count,
+        ogr.goods_id AS orderGoodsRelationgoodsId,
+        sgr.id AS shopGoodsRelationId,
+        sgr.shop_id as shopGoodsRelationshopId,
+        sgr.goods_id as shopGoodsRelationgoodsId,
+        s.id AS shopId,
+        s.name AS shopName,
+        s.telephone,
+        g.id AS goodsId,
+        g.name AS goodsName,
+        g.price AS goodsPrice,
+        gi.id AS goodsImageId,
+        gi.url
+        FROM tb_order AS o,tb_order_goods_relation AS ogr,tb_goods AS g,tb_shop_goods_relation AS sgr,tb_shop AS s,tb_goods_image AS gi
+        WHERE
+        ogr.order_id=o.id AND sgr.id=ogr.goods_id AND sgr.shop_id=s.id AND sgr.goods_id=g.id AND g.id=gi.goods_id AND gi.position=1 AND o.consumer_id=#{consumerId}
+
+    </select>
+
+
+
+
+    <sql id="Base_Column_List" >
+        id, create_time, last_update, visibility, order_number, consumer_id, address_id,
+        pay_way, transfer_conpany, transfer_time, coupon_id, price, transfer_begin, transfer_end,
+        `status`, remark
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from tb_order
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from tb_order
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.ailin.model.TbOrder" useGeneratedKeys="true" keyProperty="id" >
+        insert into tb_order (create_time, last_update, visibility,
+        order_number, consumer_id, address_id,
+        pay_way, transfer_conpany, transfer_time,
+        coupon_id, price, transfer_begin,
+        transfer_end, `status`, remark
+        )
+        values (#{createTime,jdbcType=TIMESTAMP}, #{lastUpdate,jdbcType=TIMESTAMP}, #{visibility,jdbcType=TINYINT},
+        #{orderNumber,jdbcType=VARCHAR}, #{consumerId,jdbcType=INTEGER}, #{addressId,jdbcType=INTEGER},
+        #{payWay,jdbcType=TINYINT}, #{transferConpany,jdbcType=VARCHAR}, #{transferTime,jdbcType=VARCHAR},
+        #{couponId,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL}, #{transferBegin,jdbcType=TIMESTAMP},
+        #{transferEnd,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT}, #{remark,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.ailin.model.TbOrder" useGeneratedKeys="true" keyProperty="id" >
+        insert into tb_order
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            create_time,
+            last_update,
+            visibility,
+            order_number,
+            consumer_id,
+            address_id,
+            pay_way,
+            transfer_conpany,
+            transfer_time,
+            coupon_id,
+            price,
+            transfer_begin,
+            transfer_end,
+            `status`,
+            remark,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{createTime,jdbcType=TIMESTAMP},
+            #{lastUpdate,jdbcType=TIMESTAMP},
+            #{visibility,jdbcType=TINYINT},
+            #{orderNumber,jdbcType=VARCHAR},
+            #{consumerId,jdbcType=INTEGER},
+            #{addressId,jdbcType=INTEGER},
+            #{payWay,jdbcType=TINYINT},
+            #{transferConpany,jdbcType=VARCHAR},
+            #{transferTime,jdbcType=VARCHAR},
+            #{couponId,jdbcType=INTEGER},
+            #{price,jdbcType=DECIMAL},
+            #{transferBegin,jdbcType=TIMESTAMP},
+            #{transferEnd,jdbcType=TIMESTAMP},
+            #{status,jdbcType=TINYINT},
+            #{remark,jdbcType=VARCHAR},
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.ailin.model.TbOrder" >
+        update tb_order
+        <set >
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdate != null" >
+                last_update = #{lastUpdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="visibility != null" >
+                visibility = #{visibility,jdbcType=TINYINT},
+            </if>
+            <if test="orderNumber != null" >
+                order_number = #{orderNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="consumerId != null" >
+                consumer_id = #{consumerId,jdbcType=INTEGER},
+            </if>
+            <if test="addressId != null" >
+                address_id = #{addressId,jdbcType=INTEGER},
+            </if>
+            <if test="payWay != null" >
+                pay_way = #{payWay,jdbcType=TINYINT},
+            </if>
+            <if test="transferConpany != null" >
+                transfer_conpany = #{transferConpany,jdbcType=VARCHAR},
+            </if>
+            <if test="transferTime != null" >
+                transfer_time = #{transferTime,jdbcType=VARCHAR},
+            </if>
+            <if test="couponId != null" >
+                coupon_id = #{couponId,jdbcType=INTEGER},
+            </if>
+            <if test="price != null" >
+                price = #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="transferBegin != null" >
+                transfer_begin = #{transferBegin,jdbcType=TIMESTAMP},
+            </if>
+            <if test="transferEnd != null" >
+                transfer_end = #{transferEnd,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null" >
+                `status` = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="remark != null" >
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.ailin.model.TbOrder" >
+        update tb_order
+        set create_time = #{createTime,jdbcType=TIMESTAMP},
+        last_update = #{lastUpdate,jdbcType=TIMESTAMP},
+        visibility = #{visibility,jdbcType=TINYINT},
+        order_number = #{orderNumber,jdbcType=VARCHAR},
+        consumer_id = #{consumerId,jdbcType=INTEGER},
+        address_id = #{addressId,jdbcType=INTEGER},
+        pay_way = #{payWay,jdbcType=TINYINT},
+        transfer_conpany = #{transferConpany,jdbcType=VARCHAR},
+        transfer_time = #{transferTime,jdbcType=VARCHAR},
+        coupon_id = #{couponId,jdbcType=INTEGER},
+        price = #{price,jdbcType=DECIMAL},
+        transfer_begin = #{transferBegin,jdbcType=TIMESTAMP},
+        transfer_end = #{transferEnd,jdbcType=TIMESTAMP},
+        `status` = #{status,jdbcType=TINYINT},
+        remark = #{remark,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+</mapper>

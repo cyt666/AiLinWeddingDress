@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.ailin.dao.TbOrderGoodsRelationDao" >
+    <resultMap id="BaseResultMap" type="com.ailin.model.TbOrderGoodsRelation" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
+        <result column="visibility" property="visibility" jdbcType="TINYINT" />
+        <result column="order_id" property="orderId" jdbcType="INTEGER" />
+        <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+        <result column="size" property="size" jdbcType="VARCHAR" />
+        <result column="count" property="count" jdbcType="INTEGER" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+
+
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, create_time, last_update, visibility, order_id, goods_id, `size`, `count`, `status`
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from tb_order_goods_relation
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from tb_order_goods_relation
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.ailin.model.TbOrderGoodsRelation" useGeneratedKeys="true" keyProperty="id" >
+        insert into tb_order_goods_relation (create_time, last_update, visibility,
+        order_id, goods_id, `size`,
+        `count`, `status`)
+        values (#{createTime,jdbcType=TIMESTAMP}, #{lastUpdate,jdbcType=TIMESTAMP}, #{visibility,jdbcType=TINYINT},
+        #{orderId,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER}, #{size,jdbcType=VARCHAR},
+        #{count,jdbcType=INTEGER}, #{status,jdbcType=TINYINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.ailin.model.TbOrderGoodsRelation" useGeneratedKeys="true" keyProperty="id" >
+        insert into tb_order_goods_relation
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            create_time,
+            last_update,
+            visibility,
+            order_id,
+            goods_id,
+            `size`,
+            `count`,
+            `status`,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{createTime,jdbcType=TIMESTAMP},
+            #{lastUpdate,jdbcType=TIMESTAMP},
+            #{visibility,jdbcType=TINYINT},
+            #{orderId,jdbcType=INTEGER},
+            #{goodsId,jdbcType=INTEGER},
+            #{size,jdbcType=VARCHAR},
+            #{count,jdbcType=INTEGER},
+            #{status,jdbcType=TINYINT},
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.ailin.model.TbOrderGoodsRelation" >
+        update tb_order_goods_relation
+        <set >
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdate != null" >
+                last_update = #{lastUpdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="visibility != null" >
+                visibility = #{visibility,jdbcType=TINYINT},
+            </if>
+            <if test="orderId != null" >
+                order_id = #{orderId,jdbcType=INTEGER},
+            </if>
+            <if test="goodsId != null" >
+                goods_id = #{goodsId,jdbcType=INTEGER},
+            </if>
+            <if test="size != null" >
+                `size` = #{size,jdbcType=VARCHAR},
+            </if>
+            <if test="count != null" >
+                `count` = #{count,jdbcType=INTEGER},
+            </if>
+            <if test="status != null" >
+                `status` = #{status,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.ailin.model.TbOrderGoodsRelation" >
+        update tb_order_goods_relation
+        set create_time = #{createTime,jdbcType=TIMESTAMP},
+        last_update = #{lastUpdate,jdbcType=TIMESTAMP},
+        visibility = #{visibility,jdbcType=TINYINT},
+        order_id = #{orderId,jdbcType=INTEGER},
+        goods_id = #{goodsId,jdbcType=INTEGER},
+        `size` = #{size,jdbcType=VARCHAR},
+        `count` = #{count,jdbcType=INTEGER},
+        `status` = #{status,jdbcType=TINYINT}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>
