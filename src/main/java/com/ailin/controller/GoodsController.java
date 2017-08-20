@@ -5,6 +5,7 @@ import com.ailin.model.GoodsImages;
 import com.ailin.model.Shop;
 import com.ailin.service.GoodsService;
 import com.ailin.service.ShopService;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2017/8/20.
  */
+@Controller
 @RequestMapping("goodsController")
 public class GoodsController {
     @Resource

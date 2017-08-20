@@ -19,6 +19,7 @@ import java.util.List;
  * Created by Administrator on 2017/8/20.
  */
 @Controller
+@RequestMapping("shop")
 public class ShopController {
     @Resource
     private ShopService shopService;
