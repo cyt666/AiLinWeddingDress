@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ailin.dao.ShopDao">
+    <resultMap id="shopResult" type="com.ailin.model.Shop" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="visibility" property="visibility" jdbcType="TINYINT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
+        <result column="image" property="image" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="sale_count" property="saleCount" jdbcType="INTEGER" />
+        <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+        <result column="adress" property="adress" jdbcType="VARCHAR" />
+        <result column="manager_id" property="managerId" jdbcType="INTEGER" />
+    </resultMap>
+
+    <resultMap id="goodsResult" type="com.ailin.model.Goods">
+        <id column="goodsId" property="id" />
+        <result column="putaway_time" property="putawayTime"/>
+        <result column="goodsName" property="name"/>
+        <result column="hemline" property="hemline"/>
+        <result column="description" property="description"/>
+        <result column="style" property="style"/>
+        <result column="color" property="color"/>
+        <result column="quantity" property="quantity"/>
+        <result column="goodsSale_count" property="saleCount"/>
+        <result column="weight" property="weight"/>
+        <result column="status" property="status"/>
+        <result column="price" property="price"/>
+        <result column="image" property="image"/>
+</resultMap>
+
+    <sql id="goods">
+    tb_goods.id AS goodsId,
+    tb_goods.name AS goodsName,
+    tb_goods.hemline,tb_goods.description,
+    tb_goods.style,
+    tb_goods.color,tb_goods.quantity,
+    tb_goods.sale_count AS goodsSale_count,
+    tb_goods.weight,tb_goods.status,tb_goods.price,
+    DATE_FORMAT(putaway_time,'%Y-%m-%d') putaway_time,
+    tb_goods_image.url AS image
+    </sql>
+   <sql id="fromWhere">
+     FROM tb_goods,tb_shop,tb_goods_image,tb_shop_goods_relation
+        WHERE tb_goods.id=tb_shop_goods_relation.goods_id
+        AND tb_shop.id=tb_shop_goods_relation.shop_id
+        AND tb_goods_image.goods_id=tb_shop_goods_relation.goods_id
+   </sql>
+    <sql id="shop">
+      id,image,sale_count,name,sale_count,telephone,adress,manager_id
+    </sql>
+    <!--查询条件-->
+    <sql id="conditions">
+        <if test="goodsName!=null">and tb_goods.name like '%${goodsName}%'</if>
+        <if test="goodsStyle!=null">and tb_goods.style like '%${goodsStyle}%'</if>
+        <if test="goodsHemline!=null">and tb_goods.hemline like '%${goodsHemline}%'</if>
+        <if test="goodsDescription!=null">and tb_goods.description like '%${goodsDescription}%'</if>
+        <if test="goodsTime!=null"> and putaway_time=
+            (SELECT  putaway_time FROM tb_goods,tb_shop_goods_relation
+            WHERE tb_shop_goods_relation.shop_id=#{shopId}
+            AND tb_goods.id=tb_shop_goods_relation.goods_id
+            GROUP BY putaway_time DESC LIMIT 1 )</if>
+    </sql>
+    <!--排序方式-->
+    <sql id="order">
+        <if test="order!=null and order==1"> order by tb_goods.price desc</if>
+        <if test="order!=null and order==2">order by tb_goods.price</if>
+        <if test="order!=null and order==3">order by tb_goods.sale_count desc</if>
+        <if test="order!=null and order==4">order by tb_goods.weight desc</if>
+    </sql>
+    <!--根据店铺id查询店铺商品列表-->
+    <select id="selectGoodsByShopId" resultMap="goodsResult" parameterType="INTEGER">
+       SELECT <include refid="goods"/>
+       <include refid="fromWhere"/>
+       AND tb_shop_goods_relation.shop_id=#{shopId}
+       AND tb_goods_image.position=1
+       AND tb_goods.visibility=0
+        <include refid="conditions"/>
+        <include refid="order"/>
+    </select>
+
+    <!--根据店铺id查询店铺信息-->
+    <select id="selectShopById" resultMap="shopResult" parameterType="INTEGER">
+       SELECT
+       <include refid="shop"/>
+        FROM tb_shop
+        WHERE tb_shop.id=#{shopId}
+        AND tb_shop.visibility=0
+    </select>
+    <!--根据店铺名字模糊查询所有店铺-->
+    <select id="">
+
+    </select>
+
+</mapper>

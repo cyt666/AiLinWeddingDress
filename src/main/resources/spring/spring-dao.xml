@@ -47,30 +47,4 @@ http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springfr
     </bean>
 
 
-    <!--test
-    <bean class="com.ailin.service.TbNewsDaoimpl" id="tbNewsDaoimpl">
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
-    </bean>
-    <bean class="com.ailin.service.TbHomeRotationDaoimpl" id="tbHomeRotationDaoimpl">
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
-    </bean>
-
-    <bean class="com.ailin.service.TbShopGoodsRelationDaoimpl" id="tbShopGoodsRelationDaoimpl">
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
-    </bean>
-    <bean class="com.ailin.service.TbShopDaoimpl" id="tbShopDaoimpl">
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
-    </bean>
-
-    <bean class="com.ailin.service.TbGoodsDaoimpl" id="tbGoodsDaoimpl">
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
-    </bean>
-    <bean class="com.ailin.service.TbGoodsImageDaoimpl" id="tbGoodsImageDaoimpl">
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
-    </bean>
--->
-    <bean class="com.ailin.service.TbShopGoodsRelationDaoimpl" id="tbShopGoodsRelationDaoimpl">
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
-    </bean>
-
 </beans>
