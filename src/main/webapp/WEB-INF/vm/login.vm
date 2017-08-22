@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns="http://java.sun.com/jsf/html">
+<body>
+<head>
+    <title>登录 </title>
+    <meta charset="utf-8">
+    <form action="logincheck" method="post">
+        <fieldset style="width: 420px">
+            <legend style="margin-left: 100px;"> 登录</legend>
+        用户昵称:<input name="userName"><br>
+        用户密码:<input type="password" name="password"><br>
+        <input type="submit" value=登录>&nbsp;&nbsp;&nbsp;<input type="reset" value="取消">
+    </form>
+</head>
+</body>
+</html>
